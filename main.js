@@ -1,6 +1,14 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
+const sqlite3 = require("sqlite3");
+const { open } = require("sqlite");
+const express = require("express");
+
+// Setting up express server
+const expressApp = express();
+expressApp.use(express.json());
+const port = 3000;
 
 function createWindow () {
   // Create the browser window.
@@ -41,3 +49,38 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+// Endpoint that receives data from renderer.js and uploads it to sqlite table
+expressApp.post("/upload-data", async (req, res) => {
+  const resultData = req.body;
+
+  const db = await open({
+    filename: "./RunSignUp.db",
+    driver: sqlite3.Database,
+  });
+
+  const existingPerson = await db.get(
+    "SELECT result_id FROM runsignup_data WHERE result_id = ?",
+    ["12345"]
+  );
+
+  
+  /*
+   *  Code to be worked on
+   *
+  if (existingPerson === undefined)  {
+
+  }
+
+  resultData.forEach((person) => {
+
+  })
+
+  */
+
+  res.send("Hello World");
+});
+
+expressApp.listen(port, () => {
+  console.log(`Express server is listening on port ${port}`);
+});
