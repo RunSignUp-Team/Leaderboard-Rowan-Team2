@@ -59,28 +59,28 @@ expressApp.post("/upload-data", async (req, res) => {
     driver: sqlite3.Database,
   });
 
-  const existingPerson = await db.get(
-    "SELECT result_id FROM runsignup_data WHERE result_id = ?",
-    ["12345"]
-  );
+  // Checks if the result id already existed in the table, otherwise return nothing/undefined
+  resultData.forEach(async (person) => {
+    const existingPerson = await db.get(
+      "SELECT result_id FROM runsignup_data WHERE result_id = ?",
+      [person.result_id]
+    );
 
-  
-  /*
-   *  Code to be worked on
-   *
-  if (existingPerson === undefined)  {
+    const { bib, first_name, last_name, clock_time, result_id } = person;
 
-  }
+    // If the person we want to store, set by the function above, does not exist in the table, then insert them into the chart
+    if (existingPerson === undefined) {
+      await db.run(
+        "INSERT INTO runsignup_data (result_id, bib, first_name, last_name, time) VALUES(?, ?, ?, ?, ?)",
+        [result_id, bib, first_name, last_name, clock_time]
+      );
+    }
+  });
 
-  resultData.forEach((person) => {
-
-  })
-
-  */
-
-  res.send("Hello World");
+  res.send("hello world");
 });
 
+// Starts the server and allows access to the local server via the port
 expressApp.listen(port, () => {
   console.log(`Express server is listening on port ${port}`);
 });
