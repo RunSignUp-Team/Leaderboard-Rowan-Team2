@@ -7,6 +7,7 @@ let mainWindow;
 
 let tableWindows = [];
 
+// Creates the main window 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1080,

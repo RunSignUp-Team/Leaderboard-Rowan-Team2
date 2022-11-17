@@ -98,15 +98,6 @@ const MainPage = () => {
 
   return (
     <div>
-      <button
-        onClick={() => {
-          window.electron.ipcRenderer.sendMessage("create-window", []);
-        }}
-        type="button"
-        className="btn btn-primary"
-      >
-        click me
-      </button>
       <div className="input-group mb-3">
         <input
           onChange={(e) => setInputValue(e.target.value)}
