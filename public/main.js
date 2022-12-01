@@ -1,59 +1,57 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const { open } = require('sqlite')
-const sqlite3 = require('sqlite3')
+const { open } = require("sqlite");
+const sqlite3 = require("sqlite3");
+
+const isDev = require('electron-is-dev')
 
 let mainWindow;
 
-let tableWindows = [];
-
-// Creates the main window 
+// Creates the main window
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1080,
     height: 720,
     webPreferences: {
+      // allows native modules in the frontend
       nodeIntegration: true,
+      webSecurity: false,
       preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  if (process.env.NODE_ENV === "development") {
-    mainWindow.loadURL("http://localhost:3000");
-    mainWindow.webContents.openDevTools();
-  } else {
-    mainWindow.loadFile("./build/index.html");
-  }
-
+  mainWindow.loadURL(
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "../build/index.html")}`
+  );
 
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
 
+// Creates windows to render the table view
 function createTableWindow(data) {
-  let tableWindow =
-    new BrowserWindow({
-      width: 1080,
-      height: 720,
-      webPreferences: {
-        nodeIntegration: true,
-        preload: path.join(__dirname, "preload.js"),
-      },
-    })
+  let tableWindow = new BrowserWindow({
+    width: 1080,
+    height: 720,
+    webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false,
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
 
-  tableWindows.push(tableWindow);
-  tableWindow.webContents.on('did-finish-load', () => {
-    tableWindow.webContents.send('get-data', data)
-  })
+  tableWindow.webContents.on("did-finish-load", () => {
+    tableWindow.webContents.send("get-data", data);
+  });
 
-  if (process.env.NODE_ENV === "development") {
-    tableWindow.loadURL("http://localhost:3000");
-    tableWindow.webContents.openDevTools();
-  } else {
-    tableWindow.loadFile("public/index.html");
-  }
-
+  tableWindow.loadURL(
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "../build/index.html")}`
+  );
 
   tableWindow.on("closed", () => {
     tableWindow = null;
@@ -68,9 +66,9 @@ ipcMain.on("ipc-example", async (event, arg) => {
   event.reply("ipc-example", msgTemplate("pong"));
 });
 
-ipcMain.on('save-data', async (event, resultData) => {
+ipcMain.on("save-data", async (event, resultData) => {
   const db = await open({
-    filename: "./RunSignUp.db",
+    filename: "./public/RunSignUp.db",
     driver: sqlite3.Database,
   });
 
@@ -91,9 +89,10 @@ ipcMain.on('save-data', async (event, resultData) => {
       );
     }
   });
-})
+});
 
 ipcMain.on("create-window", async (event, data) => {
+  console.log('i am creating a window')
   const tableWindow = createTableWindow(data);
 });
 

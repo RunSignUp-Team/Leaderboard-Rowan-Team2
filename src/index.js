@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import App from "./App";
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById("root")
 );
 root.render(
   <React.StrictMode>
@@ -18,7 +18,9 @@ window.electron.ipcRenderer.once("ipc-example", (arg) => {
   console.log(arg);
 });
 
+console.log('i run outside')
 window.electron.ipcRenderer.on("create-window", (path) => {
+  console.log('i run')
   console.log("redirect to path", path);
 });
 window.electron.ipcRenderer.sendMessage("ipc-example", ["ping"]);
