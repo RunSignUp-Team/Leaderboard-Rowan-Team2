@@ -74,7 +74,7 @@ const PreDisplayPage = (props) => {
 
   return (
     <div className="mt-5 container">
-      <h1 className="text-center ">Race Name and ID</h1>
+      <h1 className="text-center ">Options</h1>
       <div className="form-check">
         <input
           className="form-check-input"
