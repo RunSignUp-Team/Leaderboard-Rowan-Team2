@@ -12,7 +12,6 @@
 /build
 
 /runsignup-win32-x64
-/public/RunSignUp.db
 
 # misc
 .DS_Store
