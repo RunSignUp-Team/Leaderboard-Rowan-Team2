@@ -330,9 +330,10 @@ const TablePage = (props) => {
       <tbody>
         {/*  Loop through the result data and render their information*/}
         {resultData
+          .filter((person) => Number(person.place) > 0)
           .slice(
             optionsData.startingPlacementRange - 1,
-            optionsData.endingPlacementRange
+            optionsData.endingPlacementRange,
           )
           .map((person) => {
             // If there is no position for the person, don't render them
