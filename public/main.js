@@ -3,7 +3,7 @@ const path = require("path");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 
-const isDev = require('electron-is-dev')
+const isDev = require("electron-is-dev");
 
 let mainWindow;
 
@@ -33,6 +33,8 @@ function createWindow() {
 
 // Creates windows to render the table view
 function createTableWindow(data) {
+  const [tableData, optionsData, refetchUrl] = data;
+
   let tableWindow = new BrowserWindow({
     width: 1080,
     height: 720,
@@ -44,7 +46,8 @@ function createTableWindow(data) {
   });
 
   tableWindow.webContents.on("did-finish-load", () => {
-    tableWindow.webContents.send("get-data", data);
+    tableWindow.webContents.send("get-data", [tableData, refetchUrl]);
+    tableWindow.webContents.send("set-options", optionsData);
   });
 
   tableWindow.loadURL(
@@ -92,7 +95,7 @@ ipcMain.on("save-data", async (event, resultData) => {
 });
 
 ipcMain.on("create-window", async (event, data) => {
-  console.log('i am creating a window')
+  console.log("i am creating a window");
   const tableWindow = createTableWindow(data);
 });
 
