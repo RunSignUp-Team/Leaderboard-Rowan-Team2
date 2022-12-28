@@ -1,3 +1,6 @@
+#Licese
+Apache 2 https://www.apache.org/licenses/LICENSE-2.0
+
 # Development 
 1. `npm install`
 2. `npm run electron-dev`
